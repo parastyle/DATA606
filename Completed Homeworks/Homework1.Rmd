@@ -1,0 +1,71 @@
+---
+title: "Muller-HW-1"
+author: "Michael Muller"
+date: "February 5, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1.8 Smoking habits of UK Residents
+a. Each row represents a case. Each case encapsulates one person's attribute by columns.
+b. 1691 people were included in the survey.
+c.  
+Sex : Categorical  
+Age : Numerical / Discrete
+Marital Status : Categorical  
+Gross Income Categorical / Ordinal  
+Smoke : Categorical  
+amtWeekends : Numerical / Discrete  
+amtWeekdays : Numerical / Discrete  
+
+### 1.10 Cheaters, scope of inference.
+a. Population of interest = Children, age 5 - 15  
+Sample size is 160 Children
+b. Assuming this study was a randomized experiment in which the sample was randomly selected then yes it can be used to establish a causal relationship. Between the explanatory and response variables.
+
+### 1.28 Reading the paper.
+a. We can't conclude any causal relationship from an observational study. We can however, identify explanatory variables, and dependency of these variables.  
+b. The statement is not justified. The best drawn conclusion would be along the lines of "According to this observational study, sleep disorders and bullying might affect each other."
+
+### 1.36 Exercise and mental health
+a. Randomized Experiment  
+b. Treatment group : The group whom is hypothesized to display greater mental health. (Probably those instructed to exercise.)  
+Control group : The group whom is hypothesized to display weaker mental health. (Probably those instructed not to exercise.)
+c. This experiment employs blocking through the systematic categorization of Age.  
+d. This experiment does not employ blinding.  
+e. This experiment can be used to establish a causal relationship only on those age is near 18-55.  
+f. I would not fund this experiment because both how you exercise and how much you can excercise varies significantly from ages 18-55, the treatment group would most likely be recieving different treatments.  
+
+### 1.48 Stats scores.
+```{r}
+scores = c(57, 66, 69, 71, 72, 73, 74, 77, 78, 78, 79, 79, 81, 81, 82, 83, 83, 88, 89, 94)
+boxplot(scores)
+```
+
+### 1.50 Mix-and-match
+a:2 - Unimodal with outliers on both sides    
+b:3 - Multimodal with no outliers  
+c:1 - Unimodal with a right skew  
+
+### 1.56 Distributions and appropriate statistics pt. 2
+
+a. I'm expecting a heavy right skew with 50% of houses costing under 450,000 and the other half going up to 6,000,000. The mean would be distorted by the significant amount of houses costing up to 6,000,000 and would recommend using the median as a more accurate medium. Using the IQR would be more accurate than the standard deviation in an effort to cut off Q4, cutting off Q1 would not be bad either.  
+b. With 300,000 breaks between each quartile, this is best described as symmetric distribution. I would recommend using the mean and standard deviation over median and IQR to make typical observations.  
+c. See answer a. This is a right skew due to "most of these students don't drink" (thats high) and "few drink excessively(thats low)." Recommended typical observations made from median. Variability measured through the IQR.
+d.  Sounds to me like we would label executives as outliers, and have a symmetric distribution, using the mean and SD for observational analysis. However if we include the executives it will become right skewed, I would recommend using the median to find the center and IQR to find the variability in this case.  
+
+###1.7 Heart transplants
+a. I suspect that survival is dependent on whether or not the patient got a transplant. There is a clear positive association to be seen from the mosaic, however this might just be normal variability of this particular experiment.  
+b. The box plot again shows a clear positive association between living and recieving a heart transplant. However the boxplot also shows us that among those who died with a transplant, many lived a great many more days than those without. The transplants efficacy is stronger in the boxplot than the mosaic.
+c. 0.65 mortality rate among those who recieved a transplant. 0.88 mortality rate among those who did not recieve a transplant.  
+d.  
+i. "Does cardiac transplantation at Stanford prolong life."   
+Null hypothesis : Patient survival and receival of transplant are indepedent.  
+Alternative hypothesis : Patient survival and recieval of transplant are not indepedent.  
+ii. [28, 75, 69, 34, 0] : Lastly we calculate the fraction of simulations where the simulated differences in proportions are the differenced observed in the original studies outcome.  
+iii. The simulation results show us that the outcome of the study being due to chance is improbable; this is because there were only two simulations with a difference of at least 23%. The study should be used to demonstrate causal relationship.

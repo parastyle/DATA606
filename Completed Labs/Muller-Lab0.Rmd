@@ -1,0 +1,70 @@
+---
+title: "Muller-0"
+author: "Michael Muller"
+date: "February 4, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Start!
+
+First we get the "present" and "arbuthnot" objects 
+
+```{r}
+source("C:/Users/Exped/Desktop/Textbooks/606 Homeworks/Lab material/DATA606-master/inst/labs/Lab0/more/present.r")
+source("C:/Users/Exped/Desktop/Textbooks/606 Homeworks/Lab material/DATA606-master/inst/labs/Lab0/more/arbuthnot.r")
+df1 = arbuthnot
+df2 = present
+```
+
+### What years are included in this data set? What are the dimensions of the data frame and what are the variable or column names?
+We use range to find all the years
+
+```{r}
+range(df2$year)
+```
+We use dim (short for dimensions) to get the dimensions of our dataframe
+```{r}
+dim(df2)
+```
+That 63 rows and 3 columns
+
+We use names to get the names of columns/attributes/variables
+```{r}
+names(df2)
+```
+### How does df2(present) compare to df1(arbuthnot)? Are they on a similar scale?
+```{r}
+rangeOfYearsdf2 <- range(df2$year)
+rangeOfYearsdf1 = range(df1$year)
+sumOfBGdf1 = sum(df1$boy)+sum(df1$girl)
+sumOfBGdf2 = sum(df2$boy)+sum(df2$girl)
+```
+We can see that present df studies 19 less years (`r rangeOfYearsdf2` >>> total of (`r rangeOfYearsdf2[2]- rangeOfYearsdf2[1]` years)) than the arbuthnot df(`r rangeOfYearsdf1` >>> total of (`r (rangeOfYearsdf1[2]-rangeOfYearsdf1[1])` years))
+
+However, the sample size for the present df `r sumOfBGdf2` is much larger than the arbuthnot df `r sumOfBGdf1`
+
+Present df is of greater scale, by `r (sumOfBGdf2 - sumOfBGdf1)`
+
+### Make a plot that displays the boy-to-girl ratio for every year in the data set. What do you see? Does Arbuthnot's observation about boys being born in greater proportion than girls hold up in the U.S.? Include the plot in your response.
+```{r}
+plot(df2$year,df2$boys/df2$girls, type = 's', main = 'Boys to girls ratio in present df', ylab='B/G Ratio', xlab = 'Years', xlim = c(1940, 2050))
+     
+lineOfBestFit = lm(df2$boys/df2$girls ~ df2$year)
+abline(lineOfBestFit,col='#641399')
+```
+
+We see a steady decline in boys to girl birth ratio, however Arbuthnot's observation still holds true that boys are still born at a greater ratio than girls.
+
+### In what year did we see the most total number of births in the U.S.? 
+```{r}
+answer = df2$year[df2$girls+df2$boys == max(df2$girls+df2$boys)]
+```
+The year with most births is `r answer` 
+
+## Please leave a comment

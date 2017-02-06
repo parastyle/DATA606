@@ -1,0 +1,104 @@
+---
+title: "Muller-1"
+author: "Michael Muller"
+date: "February 5, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## DATA 606 Lab 1
+
+
+```{r}
+setwd("C:/Users/Exped/Desktop/Textbooks/606 Homeworks/Lab material/DATA606-master/inst/labs/Lab1")
+source("more/cdc.R")
+```
+
+### 1. Make a scatterplot of weight versus desired weight. Describe the relationship between these two variables.
+
+
+
+We use plot to make this happen, I use a crude method to get rid of outliers by limiting the range and domain of the graph, while including a line of best fit. Lets include a summary of our two variables as well.
+
+```{r}
+plot(cdc$weight ~ cdc$wtdesire, xlim= c(0,400), ylim=c(0,400))
+fit = lm(cdc$weight ~ cdc$wtdesire)
+abline(fit, col='purple')
+summary(cdc$weight)
+summary(cdc$wtdesire)
+```
+
+The scattplot shows us that the actual weight is higher than the desired weight (Could the desire to lose weight be a trend?) The relationship is a strong, positive, linear relationship. The mean and median agree with my assessment. Interesting to look at the desired weight max and actual weight max, suggests at least one person wants to gain significant weight.
+
+### 2. Let's consider a new variable: the difference between desired weight (wtdesire) and current weight (weight). Create this new variable by subtracting the two columns in the data frame and assigning them to a new object called wdiff.
+
+Lets then put that variable into our dataframe for ease of use
+```{r}
+wdiff = c(cdc$wtdesire-cdc$weight)
+cdc$wdiff = wdiff
+```
+
+### 3. What type of data is wdiff? If an observation wdiff is 0, what does this mean about the person's weight and desired weight. What if wdiff is positive or negative?
+Lets use str function to ascertain the type of data
+```{r}
+str(cdc$wdiff)
+```
+wdiff is of type integer, range of 20k. If wdiff shows up as 0, there is no desired change in weight for a specific person.   
+If wdiff is positive, it tells us this specific person wants to gain this much weight.   
+If wdiff is negative, it tells us this specific person wants to lose this much weight.  
+
+### 4. Describe the distribution of wdiff in terms of its center, shape, and spread, including any plots you use. What does this tell us about how people feel about their current weight?  
+Lets us use histograms and a stemplot, complete with a summary 
+```{r}
+summary(cdc$wdiff)
+hist(cdc$wdiff,breaks=200,col='purple', xlim=c(-200,100), main = 'Exhibit A')
+hist(cdc$wdiff,breaks=1100,col='red', xlim=c(-20,5), density = 45, angle = 70, main = 'Exhibit B')
+stem(cdc$wdiff, scale=1)
+```
+Exhibit A is unimodal with a left skew. Looking at the distribution in terms of frequency, people tend towards a desire to lose weight rather than gain.  The center of the distribution is -14.59 as found in summary, mode is 0. 
+
+### 5. Using numerical summaries and a side-by-side box plot, determine if men tend to view their weight differently than women.
+First the box plot
+```{r}
+boxplot(cdc$wdiff~cdc$gender,outline=FALSE)
+```
+  
+I can see from the boxplot that men have less variance in weight goals. (In that they do not want to gain or lose as much weight as women.)  
+From here, we call the summary function on wdiff for both sexes to confirm or deny my boxplot conclusions.  
+```{r}
+summary(cdc$wdiff[cdc$gender=='f']);summary(cdc$wdiff[cdc$gender=='m'])
+```
+This tells us the average man wants to lose 7.44 less pounds than the average woman.
+Also, lets find which gender had more 0 wdiffs (0 wdiff indicating body weight comfort sufficiency)  
+
+```{r}
+length(cdc$gender[cdc$gender=='f'])/length(cdc$gender[cdc$gender=='m'])   
+```
+
+Women outnumber men at a ratio of 1.09, adjust accordingly
+```{r}
+length(cdc$gender[cdc$gender=='m' & cdc$wdiff==0])*1.09 ; length(cdc$gender[cdc$gender=='f' & cdc$wdiff==0])
+```  
+
+So adjusting for quantity of sexes surveyed, and defining weight satisfaction as 0 wdiff. For every 10431 males surveyed we will get 3434 satisfied with their weight (32.92%) and for every 10431 women surveyed, we will get 2466 satisfied with their weight (23.64%).  
+
+### 6. Now it's time to get creative. Find the mean and standard deviation of weight and determine what proportion of the weights are within one standard deviation of the mean.
+
+Start with finding mean and SD, then a simple column check to see how many are within 1 SD, then divide over n
+```{r}
+SD=sd(cdc$weight)
+SD
+MEAN = mean(cdc$weight)
+MEAN
+within1sd = length(cdc$weight[cdc$weight <= SD+MEAN & cdc$weight >= MEAN-SD ])
+within1sd
+within1sd/20000
+
+```
+
+70.76% of people surveyed by the CDC in this study fall within 1 standard deviation of the mean.  
+
+## Please leave a comment
