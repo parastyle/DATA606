@@ -1,0 +1,174 @@
+---
+title: "DATA606-HW2"
+author: "Michael Muller"
+date: "February 12, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### 2.6 Dice rolls. If you roll a pair of fair dice, what is the probability of  
+#### (a) Getting a sum of 1
+P(A) = 0  
+#### (b) Getting a sum of 5
+P(B) = 4/36 || 0.11111...  
+#### (c) Getting a sum of 12
+P(C) = 1/36 || 0.028  
+
+### 2.8 Poverty and language.
+#### (a) Are living below the poverty line and speaking a foreign language at home disjoint? 
+These events are not disjoint. It is possible for the subject to speak both a foreign language and live below the poverty line.  
+#### (b) Draw a Venn diagram summarizing the variables and their associated probabilities
+
+```{r}
+library(VennDiagram,grid)
+belowPoverty = 14.6
+foreignLanguage  = 20.7
+joint = 4.2
+grid.newpage()
+vD = draw.pairwise.venn(belowPoverty,foreignLanguage,cross.area=joint,category = c(" Below PL","Speak FL"), fill = c('yellow','blue'))
+```
+
+
+####(c)  What percent of Americans live below the poverty line and only speak English at home? 
+The venn diagram shows us that this % is 10.4
+####(d) What percent of Americans live below the poverty line or speak a foreign language at home? 
+The venn diagram shows us that this % is 26.9  
+####(e) What percent of Americans live above the poverty line and only speak English at home? 
+We take the total of those below the PL, subtract that from 100. We take the remainder and subtract the total of those who speak FL, the remainder is our answer.  
+```{r}
+onOrAbovePovertyLine = 100-belowPoverty
+answer = onOrAbovePovertyLine - foreignLanguage
+answer
+```
+####(f) Is the event that someone lives below the poverty line independent of the event that the person speaks a foreign language at home?
+Realistically, we can say the events are probably dependent. Statistically speaking, in the scope of what we've learned so far, they are definitely dependent. This is because it fails the test of multiplication rule, P(A&B) should equal the P(A)*P(B)...Whic it does not. Another way to look at it, would be does the venn diagram cross? If yes, then dependent.  
+
+### 2.20 Assortative mating.
+```{r}
+femBlue = c(78,19,11)
+femBrown = c(23,23,9)
+femGreen = c(13,12,16)
+df = data.frame(femBlue,femBrown,femGreen)
+row.names(df) = c("maleBlue","maleBrown","maleGreen")
+cbind(df, Total = rowSums(df))
+```
+
+####(a)What is the probability that a randomly chosen male respondent or his partner has blue eyes? 
+P(A)+P(B)-P(A&B) = 114/204 + 108/204 - 78/204
+> 114/204 + 108/204 - 78/204
+[1] 0.7058824  
+A 70% probability that a randomly chosen male or his partner has blue eyes
+
+####(b)What is the probability that a randomly chosen male respondent with blue eyes has a partner with blue eyes? 
+ P(A|B)
+> 78/114
+[1] 0.6842105
+A 68% probability that a randomly chosen male with blue eyes has a partenr with blue eyes
+
+####(c) What is the probability that a randomly chosen male respondent with brown eyes has a partner with blue eyes? What about the probability of a randomly chosen male respondent with green eyes having a partner with blue eyes? 
+P(A|B)
+> 19/54
+[1] 0.3518519  
+35% probability that a random chosen male with brown eyes has a partner with blue eyes
+> 11/36
+[1] 0.3055556
+30% probability that a random chosen male with green eyes has a partner with blue eyes
+
+####(d) Does it appear that the eye colors of male respondents and their partners are independent? Explain your reasoning.
+It does not appear that the eye color pairings are independent, the probabilities of a blue eyed male has a blue eyed female partner is disproportionately high.
+
+
+
+###2.30 Books on a bookshelf
+```{r}
+hardcover = c(13,59)
+paperback = c(59,8)
+df2 = data.frame(hardcover,paperback)
+row.names(df2)= c('Fiction','nonFiction')
+cbind(df2, Total = rowSums(df2))
+```
+
+#### (a) Find the probability of drawing a hardcover book ???rst then a paperback ???ction book second when drawing without replacement
+```{r}
+probDraw1 = 28/95
+probDraw2 = 59/94
+prob2Given1 = probDraw1*probDraw2
+prob2Given1
+```
+####(b)Determine the probability of drawing a ???ction book ???rst and then a hardcover book second, when drawing without replacement.
+```{r}
+probDraw1 = 72/95
+probDraw2 = 28/94
+prob2Given1 = probDraw1*probDraw2
+prob2Given1
+```
+####(c)Calculate the probability of the scenario in part (b), except this time complete the calculations under the scenario where the ???rst book is placed back on the bookcase before randomly drawing the second book.
+```{r}
+probDraw1 = 72/95
+probDraw2 = 28/95
+prob2Given1 = probDraw1*probDraw2
+prob2Given1
+```
+####(d) The ???nal answers to parts (b) and (c) are very similar. Explain why this is the case.
+This is because sampling with or without replacement creates bigger differences in probability depending on the amount of events in question and items replaced, in this case the difference is 1/95 because one out of 95 books is replaced/not-replaced.   
+
+###2.38 Baggage fees. 
+####(a) Build a probability model, compute the average revenue per passenger, and compute the corresponding standard deviation.
+```{r}
+amtBags = c(0,1,2)
+costOfBaggage = c(0,25,35)
+probabilityOfBagge = c(.54,.34,.12)
+df3 = data.frame(amtBags,costOfBaggage,probabilityOfBagge)
+row.names(df3) = c('Amount of bags','cost of baggage','probability of event')
+df3$eV = df3$costOfBaggage*df3$probabilityOfBagge
+eVpp = sum(df3$eV)
+variancepp = var(df3$eV)
+sdpp = sd(df3$eV)
+print( 'Average revenue per passenger')
+eVpp##Average revenue per passenger
+print('Variance of revenue per passenger')
+variancepp ##Variance of revenue per passenger
+print('Standard deviation of revenue per passenger')
+sdpp ##Standard deviation of revenue per passenger
+```
+####(b)About how much revenue should the airline expect for a ???ight of 120 passengers? With what standard deviation? Note any assumptions you make and if you think they are justi???ed.
+```{r}
+print('You can expect the avg revenue per flight to be the eV per passenger, multiplied by number of passengers')
+eVpp*120
+print('You can expect the deviation to be the SD per passenger, multiplied by number of passengers')
+sdpp*120
+```
+
+
+### 2.44 Income and gender
+```{r}
+income = c("$1 - $9,999 or less", 
+            "$10,000 to $14,999", 
+            "$15,000 to $24,999",
+            "$25,000 to $34,999",
+            "$35,000 to $49,999",
+            "$50,000 to $64,000",
+            "$65,000 to $74,999",
+            "$75,000 to $99,999",
+            "$100,000 or more")
+briefIncome = c(10000,15000,25000,35000,45000,55000,65000,75000,99999,00)
+briefPercent = c(2.2,4.7,15.8,18.3,21.2,13.9,5.8,8.4,9.7)
+barplot(briefPercent,briefIncome,xlab='Income distribution')
+```
+
+####(a)Describe the distribution of total personal income.
+A bimodal distribution with right skew. We can see what looks like a vanishing middle class trend.  
+
+####(b)What is the probability that a randomly chosen US resident makes less than $50,000 per year?
+```{r}
+result = sum(briefPercent[1:5])
+result
+```
+####(c)What is the probability that a randomly chosen US resident makes less than$50,000 per year and is female? Note any assumptions you make. 
+We are assuming income and sex are independent factors, we don't know the gender composition of individual brackets and will assume it is 59 male to 41 female with 0 SD. Which means we can use P(A&B) = P(A)*P(B)
+The probability that a randomly chosen US resident makes less than 50k a year and is female is approx. 25%
+```{r}
+result*.41
+```
