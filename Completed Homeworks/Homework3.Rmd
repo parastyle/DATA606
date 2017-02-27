@@ -1,0 +1,111 @@
+---
+title: "DATA606 - HW3"
+author: "Michael Muller"
+date: "February 23, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DATA606)
+```
+
+#### What percent of a standard normal distribution N(µ = 0, = 1) is found in each region? Be sure to draw a graph.
+(a) Z> - 1.13 (b) Z<0.18 (c) Z>8 (d) |Z| < 0.5
+```{R}
+
+normalPlot(bounds=c(-1.13,Inf),mean=0,sd=1)#87%
+normalPlot(bounds=c(-Inf,.18),mean=0,sd=1)#57%
+normalPlot(bounds=c(8,Inf),mean=0,sd=1) #0%
+normalPlot(bounds=c(-.5,.5),mean=0,sd=1) #38%
+```
+
+#### 3.4 Triathlon times, Part I.
+(a) Write down the short-hand for these two normal distributions.    
+Men = N(µ=4313,??=583) | Women = N(µ=5261,??=807)  
+(b) What are the Z-scores for Leo's and Mary's ???nishing times? What do these Z-scores tell you?  
+(ObservedEvent - mean / SD)
+```{r}
+LeoZ = (4948-4313)/583
+LeoZ
+MaryZ = (5513-5261)/807
+MaryZ
+
+```
+(c) Did Leo or Mary rank better in their respective groups? Explain your reasoning.  
+Mary did better than Leo in relation to their respective groups. You can see this through Z score comparison. Whichever number is lower (since this is a race the goal is to have the lowest time) is a better performance.  
+
+(d) What percent of the triathletes did Leo ???nish faster than in his group?  
+(e) What percent of the triathletes did Mary ???nish faster than in her group?  
+```{r}
+pnorm(LeoZ,lower.tail = FALSE) # This is the % of Leo's group he beat
+pnorm(MaryZ,lower.tail=FALSE)# This is the % of Mary's group she beat
+```  
+(f) If the distributions of ???nishing times are not nearly normal, would your answers to parts (b) - (e) change? Explain your reasoning  
+Answer B and C would not change as the Z score does not account for whether or not distributions are normal, its simply something you use if so.  
+Answer E would change because normal probability measures rely on a normal distribution.  
+
+#### 3.18 Heights of female college students. 
+(a) The mean height is 61.52 inches with a standard deviation of 4.58 inches. Use this information to determine if the heights approximately follow the 68-95-99.7% Rule.  
+  Using the 68-95-99 rule, and looking at the heights column. About 80% (20 out of 25) of the sample space is within 1 SD, 100% are within 3 SD (Only 1 item outside 2 SD) means yeah...eyeballing this, I can easily say this is within the normal distributions.  
+(b) Do these data appear to follow a normal distribution? Explain your reasoning using the graphs provided below.
+
+
+```{r}
+heights = c(54, 55, 56, 56, 57, 58, 58, 59, 60, 60, 60, 61, 61, 62, 62, 63, 63, 63, 64, 65, 65, 67, 67, 69, 73)
+heightsMean = mean(heights)
+heightsSD = sd(heights)
+hist(heights,ylim=c(0,.13),probability=TRUE)
+x = 45:80
+y = dnorm(x=x,mean=heightsMean,sd = heightsSD)
+lines(x=x,y=y,col='purple')
+qqnormsim(heights)
+```
+Looks approximately normal to me, slightly right skewed, nothing too big.  I'd call this a normal distribution, nothings perfect. If it were, that wouldn't be normal :)  
+
+#### 3.22  Defective rate
+(a) What is the probability that the 10th transistor produced is the ???rst with a defect?  
+Geometric distribution!
+```{r}
+probFailure = .02
+dgeom(9,prob = probFailure)
+```
+(b) What is the probability that the machine produces no defective transistors in a batch of 100? 
+```{r}
+.98^100
+```
+(c) On average, how many transistors would you expect to be produced before the ???rst with a defect? What is the standard deviation?  
+```{r}
+eV = 1/.02
+eV
+```
+(d) Another machine that also produces transistors has a 5% defective rate where each transistor is produced independent of the others. On average how many transistors would you expect to be produced with this machine before the ???rst with a defect? What is the standard deviation?  
+Var(X) = 1-p  / p^2
+```{r}
+sqrt((1-.05)/(.05^2))
+```
+(e) Based on your answers to parts (c) and (d), how does increasing the probability of an event affect the mean and standard deviation of the wait time until success?
+Increasing the probability of failure the event that it is a failure becomes more probable. So the SD of waiting time and sample space before failure become smaller.
+
+#### 3.38 Male children. While it is often assumed that the probabilities of having a boy or a girl are the same, the actual probability of having a boy is slightly higher at 0.51. Suppose a couple plans to have 3 kids.   
+(a) Use the binomial model to calculate the probability that two of them will be boys.  
+```{r}
+dbinom(2,3,0.51)
+```
+(b) Write out all possible orderings of 3 children, 2 of whom are boys.  
+{BGB, BBG, GBB}
+```{r}
+3*(.49)*(.51^2)
+```
+(c) If we wanted to calculate the probability that a couple who plans to have 8 kids will have 3 boys, brie???y describe why the approach from part (b) would be more tedious than the approach from part (a).
+Writing a sample space can be quite tedious.  
+
+#### 3.42 Serving in volleyball. A not-so-skilled volleyball player has a 15% chance of making the serve, which involves hitting the ball so it passes over the net on a trajectory such that it will land in the opposing team's court. Suppose that her serves are independent of each other. 
+(a) What is the probability that on the 10th try she will make her 3rd successful serve?  
+```{r}
+choose(9,2)*((.15)^3)*(.85)^7
+```
+(b) Suppose she has made two successful serves in nine attempts. What is the probability that her 10th serve will be successful?  
+15%, events are independant
+(c) Even though parts (a) and (b) discuss the same scenario, the probabilities you calculated should be di???erent. Can you explain the reason for this discrepancy?  
+because a negative binomial distribution looks for probabbility of nth success out of kth times, where as b is asking for the probability for success, which is 15%
