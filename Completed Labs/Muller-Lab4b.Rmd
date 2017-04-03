@@ -1,0 +1,87 @@
+---
+title: "Data 606 Lab 4b"
+author: "Michael Muller"
+date: "March 26, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+set.seed(155)
+load('C:/Users/Exped/Documents/R/win-library/3.3/DATA606/labs/Lab4a/more/ames.RData')
+population <- ames$Gr.Liv.Area
+samp <- sample(population, 60)
+mean(samp)
+hist(samp,breaks = 15,probability = TRUE)
+curve(dnorm(x,mean=mean(samp),sd=sd(samp)),add=TRUE,col='purple')
+```
+
+# Exercise 1 : 
+#### Describe the distribution of your sample. What would you say is the "typical" size within your sample? Also state precisely what you interpreted "typical" to mean. 
+Multimodal, somewhat normal distribution. Typical size would be `r mean(samp)`
+# Exercise 2 :
+#### Would you expect another student's distribution to be identical to yours? Would you expect it to be similar? Why or why not?  
+I would expect another students distribution to be very similar to mine, not identical. The "samp" variable is a sample and will most likely not be congruent to another sample. However, all data sets gravitate towards a central point, in which all our samples over 32 observations would be significant enough to show the center tendency.  
+  
+  
+```{r}
+sample_mean <- mean(samp)
+se <- sd(samp) / sqrt(60)
+lower <- sample_mean - 1.96 * se
+upper <- sample_mean + 1.96 * se
+c(lower, upper)
+```
+
+# Exercise 3 :
+####For the confidence interval to be valid, the sample mean must be normally distributed and have standard error s/n?????????s/n. What conditions must be met for this to be true?  
+The sample should have 30+ independent observations. OTher sources say 32+???
+
+# Exercise 4 :
+#### What does "95% confidence" mean? If you're not sure, see Section 4.2.2.  
+95% confidence means that you, the statistician found your point estimate to be inside your 95% confidence interval.  
+
+# Exercise 5 :
+#### Does your confidence interval capture the true average size of houses in Ames? 
+Yes, anything between 1345 and 1597 would do. My sample mean is `r sample_mean`  
+
+#Exercise 6 :
+#### Each student in your class should have gotten a slightly different confidence interval. What proportion of those intervals would you expect to capture the true population mean? Why?
+95% of those sample means used to make the confidence interval should be in the true confidence interval, so I'm imagining 5% of their confidence intervals do not capture teh true population mean.  
+
+```{r}
+samp_mean <- rep(NA, 50)
+samp_sd <- rep(NA, 50)
+n <- 60
+for(i in 1:50){
+  samp <- sample(population, n) # obtain a sample of size n = 60 from the population
+  samp_mean[i] <- mean(samp)    # save sample mean in ith element of samp_mean
+  samp_sd[i] <- sd(samp)        # save sample sd in ith element of samp_sd
+}
+lower_vector <- samp_mean - 1.96 * samp_sd / sqrt(n) 
+upper_vector <- samp_mean + 1.96 * samp_sd / sqrt(n)
+plot_ci(lower_vector, upper_vector, mean(population))
+```
+# On Your Own!
+#### Using the following function (which was downloaded with the data set), plot all intervals. What proportion of your confidence intervals include the true population mean? Is this proportion exactly equal to the confidence level? If not, explain why.   
+88% of my confidence intervals include the true population mean. This is not equal to the confidence level because the CI predicts the independent probability of each sample, that a point estimate will be inside the true population mean.
+#### Pick a confidence level of your choosing, provided it is not 95%. What is the appropriate critical value?  
+Confidence level .90 ... Critical value is 1.645
+#### Calculate 50 confidence intervals at the confidence level you chose in the previous question. You do not need to obtain new samples, simply calculate new intervals based on the sample means and standard deviations you have already collected. Using the plot_ci function, plot all intervals and calculate the proportion of intervals that include the true population mean. How does this percentage compare to the confidence level selected for the intervals?
+```{r}
+samp_mean <- rep(NA, 50)
+samp_sd <- rep(NA, 50)
+n <- 60
+for(i in 1:50){
+  samp <- sample(population, n) # obtain a sample of size n = 60 from the population
+  samp_mean[i] <- mean(samp)    # save sample mean in ith element of samp_mean
+  samp_sd[i] <- sd(samp)        # save sample sd in ith element of samp_sd
+}
+lower_vector <- samp_mean - 1.645 * samp_sd / sqrt(n) 
+upper_vector <- samp_mean + 1.645 * samp_sd / sqrt(n)
+plot_ci(lower_vector, upper_vector, mean(population))
+```
+
+10% do not contain the true population mean. We operated with a 90% confidence interval. The output is as expected.
