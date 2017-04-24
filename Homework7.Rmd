@@ -1,0 +1,114 @@
+---
+title: "DATA606 Presentation"
+author: "Michael Muller"
+date: "April 20, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](7.24.png)
+
+####(a) Describe the relationship between # of calories and amount of carbs that STarbucks food menu items contain.  
+
+It's looking like a .5 correlation, moderate, positive, and linear relationship with high variability.  
+
+####(b)What are the explanatory and response variables?  
+
+Explanatory would be our X axis, so calories. Response is Y axis, so carbs.  
+
+####(c) Why might we want to fit a regression line to these data?
+
+Mostly to confirm (a), easy to make predictions and see residuals with a regression line.  
+
+####(d)Do these data meet the conditions required for fitting a least squares line?
+
+You could use a least squares line. Wouldn't be too good though. Constant variability is an issue, and its kinda skewed to the left.  
+
+![](7.26.png)
+
+####(a) Write the equation of the regression line for predicting height
+
+```{r}
+responseMean = 171.14
+responseSD = 9.41
+Rvar = .67
+explanatoryMean= 107.2
+explanatorySD= 10.37
+slope = (responseSD/explanatorySD)*Rvar
+intercept = responseMean - (slope)*explanatoryMean
+regressionFunction = function(x,slope,intercept){
+  y =(x*slope)+ intercept
+  return(y)
+}
+tinyGraph = 1:150
+tinyGraph = sapply(tinyGraph,regressionFunction,slope,intercept)
+plot(tinyGraph, type = 'l',xlab = 'Shoulder girth',ylab='height')
+
+```
+  
+predicted Y  = `r intercept` + `r slope` * explanatory variable
+
+####(b)Interpret the slope and intercept in this context
+
+The intercept has a positive offset, slope is going up there at a .6 rate to shoulder girth.  
+
+####(c)Calculate R2 of the regression line for predicting height from shoulder girth, and interpret it in teh context of teh application.   
+
+`r Rvar^2`...`r 100*(Rvar^2)`% of the variability in the height is explained by the model  
+
+####(d) A randomly selected student from your class has a shoulder girth of 100 cm. Predict the height of this student using the model.  
+
+I'm just plugging 100 into my function (regressionFunction) I made for question (a)...`r regressionFunction(100,slope,intercept)`  
+
+####(e) The student from part (d) is 160 cm tall. Calculate the residual and explain what this means.  
+
+Residual = observed - predicted, which for this case is `r  160-regressionFunction(100,slope,intercept)` Meaning the actual height is that much less than the line predicted.  
+
+####(f) A one year old has a shoulder girth of 56 cm. Would it be appropriate to use this linear model to predict the height of this child?  
+
+Original data only includes 80 to 140 shoulder girth which is a minus...Variability seems to be constant, correlation is strong and linear...While it would be innappropriate, I'd do it in absence of any other model.
+
+
+![](7.30.png)
+
+  
+#### (a) Write out the linear model.  
+
+-.357 + 4.034 * x  
+
+#### (b) Interpret the intercept  
+
+We can expect that a non-existant body weight to have a negative heart weight. 
+
+#### (c) Interpret the slope
+
+We can expect that for each additional Kg of body weight for a cat, their heart will be 4grams heavier.
+
+#### (d)Interpret R2  
+
+64% of hte variability in heart weight of cats can be explained by their body weight  
+
+#### (e) Cacluclate hte correlation coefficient
+
+We take the square root of R2 which is  `r sqrt(.6466)`  
+
+![](7.401.png)
+![](7.402.png)
+
+####(a)  
+
+3.9983 = 4.010 + b1 * -.0883  >>>>> b1 = `r  (3.9983 - 4.01)/(0.0883)`
+
+####(b)
+
+Yes, you can eyeball this, or look at the P-Value. Not a chance it isn't positive.
+
+####(c)
+
+Linearity : Weak positive linear relationship eyeballed from scatterplot - Check  
+Constant Variability : Looking at residual scatterplot, check. A few outliers, nothing serious - Check  
+Nearly normal residuals : Histogram shows near normal distribution, left skewed - Check  
+Independent Observations * : Probably SRS compliant. - Check
