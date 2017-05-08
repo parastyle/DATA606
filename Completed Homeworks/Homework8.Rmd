@@ -1,0 +1,80 @@
+---
+title: "Data 606 Homework 8"
+author: "Michael Muller"
+date: "May 7, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(plotly)
+```
+
+
+![](C:\Users\Exped\Desktop\Textbooks\606 Homeworks\Completed Homeworks\8.2.png)
+
+###(a) Predicted baby weight = 120.07 - 1.93 * parity
+###(b) Parody 1 = 120.07 - 1.93 or 118.14   /  Parody 0 = 120.07  / There is a 1.93 birthweight difference between first borns and latters. 
+###(c) There is not a statistically signifcant relationship, I infer this from the p-value being greater than .05.
+
+
+
+
+
+
+![](C:\Users\Exped\Desktop\Textbooks\606 Homeworks\Completed Homeworks\8.4.png)
+
+###(a) Predicted absenteeism = 18.93 - 9.11 * eth + 3.10 * sex + 2.15 * lrn
+###(b) Slow learners are absent 2.15 more days than the average leaner. non-Aboriginals are absent 9.11 days more than Aboriginals. Males are absent 3.1 days more than females.  
+###(c) residual = 2 - 24.18 = -22.18
+###(d)
+```{r}
+observations = 146
+variablesC = 3
+resVariance = 240.57
+absenteeVar = 264.17
+rs = 1-(resVariance/absenteeVar)
+ars = 1 -(resVariance/absenteeVar) * ( (observations-1) / (observations-variablesC-1) )
+rs
+ars
+```
+
+
+![](C:\Users\Exped\Desktop\Textbooks\606 Homeworks\Completed Homeworks\8.8.png)
+
+###(a) The learner variable should be removed first because the residuals show the largest variance.  
+
+
+![](C:\Users\Exped\Desktop\Textbooks\606 Homeworks\Completed Homeworks\8.16.png)
+
+
+###(a) We can see that if a mission took place below 64 degrees, it has at least one damaged O-ring. There seems to be a correlation between temperature and damage to O-rings. That as temperatures go higher, O-ring damage decreases.
+###(b) Temperature being the explanatory variable displays a negative relationship with O-ring damage. The p-value is so close to 0, that we can induce this is not due to chance. 
+###(c) ![](C:\Users\Exped\Desktop\Textbooks\606 Homeworks\Completed Homeworks\temp.png)
+###(d) Well, only using the model "yes," due to the p-value. However I imagine as the missions incremented, technology regarding their safety and durability had increased as well. With a little more information, "time" could have been our explanatory variable.  
+
+![](C:\Users\Exped\Desktop\Textbooks\606 Homeworks\Completed Homeworks\8.18.png)
+###(a)
+```{r}
+logModel = function(temperature){
+  oRing  = 11.6630 - 0.2162 * temperature
+  answer = 100*(exp(oRing) / (1+exp(oRing)))
+  return(answer)
+}
+
+temps = c(57,65,59,67,61,69,63,71,51,53,55)
+probabilites = sapply(temps,logModel)
+probabilites
+```
+
+
+###(b)
+```{r}
+
+
+plot(y=probabilites, x=temps)
+curve(logModel(x), from=40,to=80,add=TRUE,xlab='o-ring damage',ylab='temperature')
+```
+
+###(c) As explained before, as temperature rises, the technology used on incremental missions increases, but we do not account for that. It may be that temperature has NO affect on o-rings; but we wouldn't know with this little information.
+
