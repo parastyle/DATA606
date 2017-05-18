@@ -1,0 +1,127 @@
+---
+title: "DATA 606 Final Project"
+author: "Michael Muller"
+date: "May 16, 2017"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(SASxport)
+library(psych)
+library(prettydoc)
+library(ggplot2)
+library(reshape2)
+library(gridExtra)
+```
+
+## Introduction : 
+My research question is whether a person's height is predictive of their BMI classification. The BMI system uses height to ascertain a person's body mass, however height should not be predictive of body mass. In simpler terms, while we use a person's height to determine their BMI, a person should not have a higher probability of obtaining a certain BMI solely on the observation they are short or tall.  
+
+Why should you care? : The BMI system has been, and will be used for many years to come because of its overall consistency and easy calculation; being classified as underweight, overweight, or obese under this system is a call for self evaluation. Being able to accurately dismiss or corroborate a classification is important for well being. Hopefully this observational study will help someone in that process to a better well being.
+
+While the BMI system has been used for over 100 years in population studies, it has been critized in that it does not differentiate between fat or lean tissue to assess an individual's health. To mitigate this confounding variable (lean tissue composition per individual index) we will be using the SRS compliant CDC survey data which for the purpose of this observational study, will be assumed to gravitate towards a normal distribution of lean tissue composition representative of the USA population. Also, this study will be using the "Body Measures" sample data only on the age group of 2-19 years of age. 
+
+## Data 
+
+Data collection : Data is downloaded through the Centers for Disease Control and Prevention (CDC) government database. Data is collected in a joint effort through the CDC and the NCHS Research Data Center.  
+
+Cases : Each case represents an eligible survey participant aged 2-150, quality assurance for fairness and random sampling controlled by the NCHS Research Data Center and CDC. This dataset contains around 9000 observations.  
+
+Variables : During the exploratory phase of this study, I Will observe how height, saggital abdominal diameter, and waist circumference relate to BMI Classification; during the inferential phase of this study, I will be using BMI classifications as my ordinal response variable and height as my discrete, numerical explanatory variable.
+
+Type of study : This will be an observational study, because I will be examining data pre-allocated for a plethora of purposes. If I detect any difference of height between BMI classifications, I will perform ANOVA to test for differences in the means.
+
+Scope of inference : The population of interest would be humans of North America; while I will only be observing cases of humans ages 2-19, being able to detect any bias or correlation between BMI classification and height should be applicable to all users of the BMI system in a very broad area. Nothing in this study will be able to find a causal link between any factors, because this will not be an experiment.  
+
+
+##Exploratory data analysis : 
+
+```{r}
+experimental = read.xport("C:/Users/Exped/Desktop/607P2/BMX_H.XPT")
+bmi = experimental$BMXBMI # Body mass index
+bhi = experimental$BMXHT # Height
+bwi = experimental$BMXWT # Weight
+bmc = experimental$BMDBMIC # Body mass classification
+sad = experimental$BMDAVSAD # Saggital Abdominal diameter
+wci = experimental$BMXWAIST # Waist circumference
+
+
+dataAnalysis = data.frame(bmi,bhi,bwi,bmc,sad,wci)
+exploratoryData  = subset(dataAnalysis, bmc >= 0) # Reduce dataframe to 3.5k~ observations, all of which are ages 2-19
+```
+
+First, lets look at the distribution of BMI 
+
+```{r, warning=FALSE,echo=FALSE}
+
+ggplot(exploratoryData, aes(bmi)) + geom_histogram(col='green',fill='blue',alpha=.3,bins = 30) + labs(title='Histogram of body mass index')+labs(x='BMI',y='Frequency') +xlim(c(10,40))
+qqnorm(exploratoryData$bmi)
+
+```
+
+Body mass index seems to follow a mostly normal, unimodal distribution with a discernable right skew that will be suitable for further analysis. 
+
+
+
+```{r}
+ggplot(exploratoryData, aes(x=as.factor(bmc),y=bhi)) + geom_boxplot(fill='red',alpha=.3) + xlab("BMI classification") + ylab('Height')
+```
+
+#### Using a comparative boxplot between the BMI classifications 1-4, we can see that as the bodymass index increases, so does height. A perfect system should have no correlation here.
+
+
+```{r,echo=FALSE}
+by(exploratoryData$bhi,exploratoryData$bmc, length)
+describe(exploratoryData$bhi)
+describe(exploratoryData$bhi[exploratoryData$bmc==4])
+```
+We see that together, mean/median falls towards 140 height. However people in the 4th BMI classification have a mean of 147.1, and a median of 152.6! While were here, lets check out saggital abdominal and waist diameters.  
+
+```{r,echo=FALSE,warning=FALSE}
+ggplot(exploratoryData, aes(x=as.factor(bmc),y=sad)) + geom_boxplot(fill='purple',alpha=.3) + xlab("BMI classification") +ylab('Saggital Abdominal diameter')
+ggplot(exploratoryData, aes(x=as.factor(bmc),y=wci)) + geom_boxplot(fill='blue',alpha=.3) + xlab("BMI classification") +ylab('Waist circumference')
+```
+
+Very strong correlation detected! As people become weightier, the circumference of their waist, and diameter of their "gut" increase at a pretty linear rate. This information is useful to show us that for the most part, BMI system works!  
+
+## Inference
+
+$H_0 :$ Height is not predictive of BMI classification, and the means of height between BMI classifications are the same.  
+
+$H_A :$ Height is predictive of BMI classification, and the means of height between BMI classifications are not the same.  
+
+### Conditions : 
+
+Independence of cases : Amount of cases below 10% of population and SRS compliant. CHECK  
+
+Normality and variance : Distributions of BMI are mostly normal and unimodal; residuals are consistent. CHECK 
+
+Sample size : All factors are above 32 cases. Minimum being 132. CHECK  
+
+All systems are go.  
+
+```{r echo=FALSE,warning=FALSE}
+myModel  = lm(exploratoryData$bhi ~ as.factor(exploratoryData$bmc))
+summary(myModel)
+```
+
+
+
+```{r echo=FALSE,warning=FALSE}
+anova(myModel)
+```
+
+## Conclusion :
+
+Both the model and ANOVA based on residuals shows a difference between height and BMI classification.  
+We can see that the model makes a clear distinction of means at classifications 3 and 4. While the P-value is large enough at classification 2 that any difference could have been due to chance.  When performing ANOVA, we see that ANOVA's P-value confirms a correlation between height and BMI classification with a probability of 2.2e-16 (Less than our .05 significance level) that the difference was due to chance.  
+
+Using these results we can reject the null hypothesis in favor of the alternative hypothesis. That there is a difference of the means of heights between BMI classifications.  
+
+During this study we've seen that the BMI system works well, however height should not be predictive of BMI classification which calls for a revision of the BMI system, perhaps using a coefficient in the BMI formula's divisor (height) could properly mitigate this flaw.
+
+Possible further research : Finding a coefficient to mitigate height's predictive nature of BMI.
